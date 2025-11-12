@@ -1,5 +1,5 @@
 "use client"
-
+//page for regstration
 import type React from "react"
 
 import { useState } from "react"
