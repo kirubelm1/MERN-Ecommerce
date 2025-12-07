@@ -1,4 +1,4 @@
-# 🛍️ MERN E-Commerce Platform (In-Development)
+# 🛍️ MERN E-Commerce Platform (In Development)
 ⭐ If you like this project, give it a star on GitHub!
 Contributing is highly encouraged
 
