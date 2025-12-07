@@ -6,6 +6,7 @@ import connectDB from "./config/database.js"
 import authRoutes from "./routes/authRoutes.js"
 import productRoutes from "./routes/productRoutes.js"
 import orderRoutes from "./routes/orderRoutes.js"
+import analyticsRoutes from "./routes/analyticsRoutes.js"
 
 const app = express()
 
@@ -37,6 +38,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use("/api/auth", authRoutes)
 app.use("/api/products", productRoutes)
 app.use("/api/orders", orderRoutes)
+app.use("/api/analytics", analyticsRoutes)
 
 // Health check
 app.get("/api/health", (req, res) => {

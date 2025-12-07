@@ -7,6 +7,7 @@ import Register from "./pages/Register"
 import Products from "./pages/Products"
 import ProductDetail from "./pages/ProductDetail"
 import Admin from "./pages/Admin"
+import Analytics from "./pages/Analytics"
 import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
 import AdminOrders from "./pages/AdminOrders"
@@ -57,6 +58,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="admin">
                 <Admin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/analytics"
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <Analytics />
               </ProtectedRoute>
             }
           />
