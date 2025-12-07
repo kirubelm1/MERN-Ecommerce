@@ -68,6 +68,8 @@ router.post("/", protect, admin, upload.single("image"), async (req, res) => {
         category,
         stock: Number(stock),
         featured: featured === "true",
+        discount: Number(req.body.discount || 0),
+        features: req.body.features ? JSON.parse(req.body.features) : [],
         imageUrl: result.secure_url,
         cloudinaryPublicId: result.public_id,
       })
@@ -106,6 +108,8 @@ router.put("/:id", protect, admin, upload.single("image"), async (req, res) => {
     product.category = category || product.category
     product.stock = stock ? Number(stock) : product.stock
     product.featured = featured !== undefined ? featured === "true" : product.featured
+    product.discount = req.body.discount !== undefined ? Number(req.body.discount) : product.discount
+    product.features = req.body.features ? JSON.parse(req.body.features) : product.features
 
     // If new image is uploaded
     if (req.file) {

@@ -38,6 +38,16 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    discount: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
+    features: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,

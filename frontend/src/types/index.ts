@@ -8,6 +8,8 @@ export interface Product {
   cloudinaryPublicId: string
   stock: number
   featured: boolean
+  discount: number
+  features: string[]
   createdAt: string
   updatedAt: string
 }

@@ -24,6 +24,8 @@ export default function Admin() {
     category: "",
     stock: "",
     featured: false,
+    discount: "",
+    features: [""],
   })
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [submitting, setSubmitting] = useState(false)
@@ -59,6 +61,8 @@ export default function Admin() {
       formDataToSend.append("category", formData.category)
       formDataToSend.append("stock", formData.stock)
       formDataToSend.append("featured", String(formData.featured))
+      formDataToSend.append("discount", formData.discount)
+      formDataToSend.append("features", JSON.stringify(formData.features.filter((f) => f.trim())))
 
       if (imageFile) {
         formDataToSend.append("image", imageFile)
@@ -79,6 +83,8 @@ export default function Admin() {
         category: "",
         stock: "",
         featured: false,
+        discount: "",
+        features: [""],
       })
       setImageFile(null)
       setShowForm(false)
@@ -100,6 +106,8 @@ export default function Admin() {
       category: product.category,
       stock: String(product.stock),
       featured: product.featured,
+      discount: String(product.discount || 0),
+      features: product.features?.length ? product.features : [""],
     })
     setShowForm(true)
   }
@@ -125,6 +133,8 @@ export default function Admin() {
       category: "",
       stock: "",
       featured: false,
+      discount: "",
+      features: [""],
     })
     setImageFile(null)
   }
@@ -214,6 +224,17 @@ export default function Admin() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.discount}
+                    onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -224,6 +245,43 @@ export default function Admin() {
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Key Features</label>
+                {formData.features.map((feature, index) => (
+                  <div key={index} className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={feature}
+                      onChange={(e) => {
+                        const newFeatures = [...formData.features]
+                        newFeatures[index] = e.target.value
+                        setFormData({ ...formData, features: newFeatures })
+                      }}
+                      placeholder={`Feature ${index + 1}`}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {formData.features.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const newFeatures = formData.features.filter((_, i) => i !== index)
+                          setFormData({ ...formData, features: newFeatures })
+                        }}
+                        className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, features: [...formData.features, ""] })}
+                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                >
+                  + Add Feature
+                </button>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

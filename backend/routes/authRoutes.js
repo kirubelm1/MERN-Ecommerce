@@ -67,4 +67,49 @@ router.get("/profile", protect, async (req, res) => {
   })
 })
 
+// Get wishlist
+router.get("/wishlist", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).populate("wishlist")
+    res.json(user.wishlist || [])
+  } catch (error) {
+    console.error("Wishlist get error:", error)
+    res.status(500).json({ message: error.message })
+  }
+})
+
+// Add to wishlist
+router.post("/wishlist/:productId", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+    if (!user.wishlist) {
+      user.wishlist = []
+    }
+    if (!user.wishlist.includes(req.params.productId)) {
+      user.wishlist.push(req.params.productId)
+      await user.save({ validateBeforeSave: false })
+    }
+    res.json({ message: "Added to wishlist" })
+  } catch (error) {
+    console.error("Wishlist add error:", error)
+    res.status(500).json({ message: error.message })
+  }
+})
+
+// Remove from wishlist
+router.delete("/wishlist/:productId", protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+    if (!user.wishlist) {
+      user.wishlist = []
+    }
+    user.wishlist = user.wishlist.filter((id) => id.toString() !== req.params.productId)
+    await user.save({ validateBeforeSave: false })
+    res.json({ message: "Removed from wishlist" })
+  } catch (error) {
+    console.error("Wishlist remove error:", error)
+    res.status(500).json({ message: error.message })
+  }
+})
+
 export default router

@@ -11,14 +11,14 @@ const api = axios.create({
 
 // Add token to requests
 api.interceptors.request.use((config) => {
-  const user = localStorage.getItem("user")
-  if (user) {
-    const { token } = JSON.parse(user)
-    // Merge Authorization header safely while keeping existing headers.
-    // Use `any` here because AxiosRequestHeaders is not a plain object type in TS types.
-    ;(config.headers as any) = {
-      ...(config.headers as any),
-      Authorization: `Bearer ${token}`,
+  const authStorage = localStorage.getItem("auth-storage")
+  if (authStorage) {
+    const { state } = JSON.parse(authStorage)
+    if (state?.user?.token) {
+      ;(config.headers as any) = {
+        ...(config.headers as any),
+        Authorization: `Bearer ${state.user.token}`,
+      }
     }
   }
   return config

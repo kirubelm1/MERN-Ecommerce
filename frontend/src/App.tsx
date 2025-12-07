@@ -5,6 +5,7 @@ import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Products from "./pages/Products"
+import ProductDetail from "./pages/ProductDetail"
 import Admin from "./pages/Admin"
 import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
@@ -24,6 +25,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="customer">
                 <Products />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/products/:id"
+            element={
+              <ProtectedRoute requiredRole="customer">
+                <ProductDetail />
               </ProtectedRoute>
             }
           />

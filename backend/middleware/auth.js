@@ -2,12 +2,8 @@ import jwt from "jsonwebtoken"
 import User from "../models/User.js"
 
 export const protect = async (req, res, next) => {
-  // Development bypass: when DISABLE_AUTH=true, inject a dev admin user
+  // Development bypass: when DISABLE_AUTH=true, inject a dev user
   if (process.env.DISABLE_AUTH && process.env.DISABLE_AUTH.toLowerCase() === "true") {
-    // Ensure a real User document exists so downstream code that expects
-    // a MongoDB ObjectId for req.user._id (e.g. when creating Orders) does
-    // not fail with a cast error. We look up by ADMIN_EMAIL and create a
-    // simple admin user if missing. Password will be hashed by the model.
     try {
       const devEmail = process.env.ADMIN_EMAIL || "dev@local"
       let devUser = await User.findOne({ email: devEmail })
@@ -16,14 +12,13 @@ export const protect = async (req, res, next) => {
         devUser = await User.create({
           email: devEmail,
           password: devPassword,
-          name: process.env.ADMIN_NAME || "Dev Admin",
+          name: process.env.ADMIN_NAME || "Dev User",
           role: "admin",
         })
       }
-
-      // Attach the full user document so other middleware/routes can use it
       req.user = devUser
-      return next()
+      next()
+      return
     } catch (err) {
       console.error("Error creating or finding dev user:", err)
       return res.status(500).json({ message: "Server error in auth bypass" })
@@ -48,7 +43,7 @@ export const protect = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     req.user = await User.findById(decoded.id).select("-password")
-    return next()
+    next()
   } catch (error) {
     return res.status(401).json({ message: "Not authorized, token failed" })
   }

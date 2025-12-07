@@ -1,13 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import api from "../config/api"
 import type { Product } from "../types"
 import { useCartStore } from "../store/cartStore"
-import { ShoppingCart, Heart } from "lucide-react"
+import { ShoppingCart } from "lucide-react"
 import Button from "../components/ui/Button"
 
 export default function Products() {
+  const navigate = useNavigate()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
@@ -48,6 +50,8 @@ export default function Products() {
       alert(`${product.name} added to cart!`)
     }
   }
+
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -121,12 +125,13 @@ export default function Products() {
               ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {filteredProducts.map((product) => (
-                  <div key={product._id} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transform transition-transform duration-200 hover:-translate-y-1 flex flex-col h-full">
+                  <div
+                    key={product._id}
+                    onClick={() => navigate(`/products/${product._id}`)}
+                    className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-2xl transform transition-transform duration-200 hover:-translate-y-1 flex flex-col h-full cursor-pointer"
+                  >
                     <div className="relative">
                       <img src={product.imageUrl || "/placeholder.svg"} alt={product.name} className="w-full h-48 object-cover" />
-                      <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:bg-gray-100">
-                        <Heart className="w-5 h-5 text-gray-600" />
-                      </button>
                     </div>
 
                     <div className="p-4 flex-1 flex flex-col">
@@ -142,7 +147,15 @@ export default function Products() {
                           </span>
                         </div>
 
-                        <Button type="button" onClick={() => handleAddToCart(product)} disabled={product.stock === 0} className="w-full flex items-center justify-center gap-2">
+                        <Button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleAddToCart(product)
+                          }}
+                          disabled={product.stock === 0}
+                          className="w-full flex items-center justify-center gap-2"
+                        >
                           <ShoppingCart className="w-5 h-5" />
                           {product.stock > 0 ? "Add to Cart" : "Out of Stock"}
                         </Button>
