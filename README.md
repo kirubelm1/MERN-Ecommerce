@@ -2,6 +2,8 @@
 ⭐ If you like this project, give it a star on GitHub!
 Contributing is highly encouraged
 
+![Website Preview](assets/image.png)
+
 A modern and fully functional **eCommerce website** built using the **MERN stack (MongoDB, Express, React, Node.js)**.  
 Developed by **Kirubel Mesfin**, this project delivers a seamless shopping experience with authentication, product management, image uploads, and order tracking.
 
