@@ -161,4 +161,91 @@ router.delete("/:id", protect, admin, async (req, res) => {
   }
 })
 
+// Add or update rating
+router.post("/:id/rating", protect, async (req, res) => {
+  try {
+    const { stars, review } = req.body
+    const product = await Product.findById(req.params.id)
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" })
+    }
+
+    if (!stars || stars < 1 || stars > 5) {
+      return res.status(400).json({ message: "Rating must be between 1 and 5" })
+    }
+
+    // Check if user has purchased this product
+    const Order = (await import("../models/Order.js")).default
+    const userOrders = await Order.find({
+      user: req.user._id,
+    })
+
+    const hasPurchased = userOrders.some((order) =>
+      order.items.some((item) => item.product.toString() === req.params.id)
+    )
+
+    if (!hasPurchased) {
+      return res.status(403).json({ message: "You can only rate products you have purchased" })
+    }
+
+    // Check if user already rated
+    const existingRatingIndex = product.ratings.findIndex(
+      (r) => r.userId.toString() === req.user._id.toString()
+    )
+
+    if (existingRatingIndex > -1) {
+      // Update existing rating
+      product.ratings[existingRatingIndex].stars = Number(stars)
+      product.ratings[existingRatingIndex].review = review || ""
+      product.ratings[existingRatingIndex].createdAt = Date.now()
+    } else {
+      // Add new rating
+      product.ratings.push({
+        userId: req.user._id,
+        stars: Number(stars),
+        review: review || "",
+      })
+    }
+
+    // Calculate average rating properly
+    const totalStars = product.ratings.reduce((sum, r) => sum + Number(r.stars), 0)
+    product.averageRating = Math.round((totalStars / product.ratings.length) * 10) / 10
+    product.totalRatings = product.ratings.length
+
+    await product.save()
+
+    res.json({
+      averageRating: product.averageRating,
+      totalRatings: product.totalRatings,
+      userRating: stars,
+    })
+  } catch (error) {
+    console.error("Rating error:", error)
+    res.status(500).json({ message: error.message })
+  }
+})
+
+// Get product ratings
+router.get("/:id/ratings", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).populate(
+      "ratings.userId",
+      "name"
+    )
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" })
+    }
+
+    res.json({
+      averageRating: product.averageRating,
+      totalRatings: product.totalRatings,
+      ratings: product.ratings.sort((a, b) => b.createdAt - a.createdAt),
+    })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
 export default router

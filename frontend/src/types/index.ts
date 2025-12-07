@@ -1,3 +1,10 @@
+export interface Rating {
+  userId: string
+  stars: number
+  review: string
+  createdAt: string
+}
+
 export interface Product {
   _id: string
   name: string
@@ -10,6 +17,9 @@ export interface Product {
   featured: boolean
   discount: number
   features: string[]
+  ratings: Rating[]
+  averageRating: number
+  totalRatings: number
   createdAt: string
   updatedAt: string
 }

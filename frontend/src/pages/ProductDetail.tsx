@@ -5,15 +5,23 @@ import { useParams, useNavigate } from "react-router-dom"
 import api from "../config/api"
 import type { Product } from "../types"
 import { useCartStore } from "../store/cartStore"
+import { useAuthStore } from "../store/authStore"
 import { ShoppingCart, ArrowLeft } from "lucide-react"
 import Button from "../components/ui/Button"
+import StarRating from "../components/StarRating"
 
 export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuthStore()
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
+  const [userRating, setUserRating] = useState(0)
+  const [review, setReview] = useState("")
+  const [submittingRating, setSubmittingRating] = useState(false)
+  const [hasPurchased, setHasPurchased] = useState(false)
+  const [reviews, setReviews] = useState<any[]>([])
   const { addItem } = useCartStore()
 
   useEffect(() => {
@@ -21,6 +29,32 @@ export default function ProductDetail() {
       try {
         const { data } = await api.get<Product>(`/products/${id}`)
         setProduct(data)
+        
+        // Fetch reviews
+        const reviewsRes = await api.get(`/products/${id}/ratings`)
+        setReviews(reviewsRes.data.ratings || [])
+        
+        // Check if user has purchased
+        if (user) {
+          try {
+            const ordersRes = await api.get("/orders/myorders")
+            const purchased = ordersRes.data.some((order: any) =>
+              order.items.some((item: any) => item.product === id)
+            )
+            setHasPurchased(purchased)
+            
+            // Check if user already rated
+            const existingRating = data.ratings?.find(
+              (r: any) => r.userId === user._id
+            )
+            if (existingRating) {
+              setUserRating(existingRating.stars)
+              setReview(existingRating.review || "")
+            }
+          } catch (error) {
+            console.error("Error checking purchase:", error)
+          }
+        }
       } catch (error) {
         console.error("Error fetching product:", error)
       } finally {
@@ -29,7 +63,7 @@ export default function ProductDetail() {
     }
 
     fetchProduct()
-  }, [id])
+  }, [id, user])
 
   const handleAddToCart = () => {
     if (product && product.stock > 0) {
@@ -37,6 +71,34 @@ export default function ProductDetail() {
         addItem(product)
       }
       alert(`${quantity} x ${product.name} added to cart!`)
+    }
+  }
+
+  const handleSubmitRating = async () => {
+    if (!product || !userRating) {
+      alert("Please select a rating")
+      return
+    }
+    
+    setSubmittingRating(true)
+    try {
+      const { data } = await api.post(`/products/${product._id}/rating`, {
+        stars: userRating,
+        review,
+      })
+      
+      // Refresh product data and reviews
+      const productRes = await api.get<Product>(`/products/${product._id}`)
+      setProduct(productRes.data)
+      
+      const reviewsRes = await api.get(`/products/${product._id}/ratings`)
+      setReviews(reviewsRes.data.ratings || [])
+      
+      alert("Rating submitted successfully!")
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Failed to submit rating")
+    } finally {
+      setSubmittingRating(false)
     }
   }
 
@@ -104,6 +166,15 @@ export default function ProductDetail() {
                   {product.category}
                 </span>
                 <h1 className="text-4xl font-bold text-gray-900 mb-4">{product.name}</h1>
+                
+                {/* Rating Display */}
+                <div className="flex items-center gap-3 mb-4">
+                  <StarRating rating={product.averageRating || 0} readonly size={24} />
+                  <span className="text-lg font-semibold text-gray-700">
+                    {product.averageRating ? product.averageRating.toFixed(1) : "0.0"}
+                  </span>
+                  <span className="text-gray-500">({product.totalRatings || 0} reviews)</span>
+                </div>
               </div>
 
               <div className="border-t border-b border-gray-200 py-6">
@@ -149,6 +220,74 @@ export default function ProductDetail() {
                   </ul>
                 </div>
               )}
+
+              {/* Rate This Product - Only if purchased */}
+              {user && hasPurchased && (
+                <div className="border-t pt-6">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-3">Rate This Product</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Your Rating
+                      </label>
+                      <StarRating rating={userRating} onRate={setUserRating} size={32} />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Your Review (Optional)
+                      </label>
+                      <textarea
+                        value={review}
+                        onChange={(e) => setReview(e.target.value)}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Share your experience with this product..."
+                      />
+                    </div>
+                    <Button
+                      onClick={handleSubmitRating}
+                      disabled={!userRating || submittingRating}
+                      className="w-full"
+                    >
+                      {submittingRating ? "Submitting..." : "Submit Rating"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Customer Reviews */}
+              <div className="border-t pt-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Customer Reviews</h3>
+                {reviews.length > 0 ? (
+                  <div className="space-y-4">
+                    {reviews.map((rating, index) => (
+                      <div key={index} className="border-b pb-4 last:border-b-0">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center font-semibold text-blue-600">
+                            {rating.userId?.name?.charAt(0) || "U"}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-semibold text-gray-900">
+                                {rating.userId?.name || "Anonymous"}
+                              </span>
+                              <span className="text-sm text-gray-500">
+                                {new Date(rating.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <StarRating rating={rating.stars} readonly size={16} />
+                            {rating.review && (
+                              <p className="text-gray-700 mt-2">{rating.review}</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500 text-center py-8">No reviews yet. Be the first to review!</p>
+                )}
+              </div>
 
               <div className="space-y-4">
                 <div className="flex items-center gap-4">

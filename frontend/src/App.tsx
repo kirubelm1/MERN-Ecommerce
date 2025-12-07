@@ -10,6 +10,7 @@ import Admin from "./pages/Admin"
 import Analytics from "./pages/Analytics"
 import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
+import OrderConfirmation from "./pages/OrderConfirmation"
 import AdminOrders from "./pages/AdminOrders"
 
 function App() {
@@ -50,6 +51,14 @@ function App() {
             element={
               <ProtectedRoute requiredRole="customer">
                 <Checkout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order-confirmation"
+            element={
+              <ProtectedRoute requiredRole="customer">
+                <OrderConfirmation />
               </ProtectedRoute>
             }
           />

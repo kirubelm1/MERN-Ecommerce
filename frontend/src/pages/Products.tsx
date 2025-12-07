@@ -7,6 +7,7 @@ import type { Product } from "../types"
 import { useCartStore } from "../store/cartStore"
 import { ShoppingCart } from "lucide-react"
 import Button from "../components/ui/Button"
+import StarRating from "../components/StarRating"
 
 export default function Products() {
   const navigate = useNavigate()
@@ -137,6 +138,12 @@ export default function Products() {
                     <div className="p-4 flex-1 flex flex-col">
                       <div className="text-sm text-blue-600 font-medium mb-1">{product.category}</div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">{product.name}</h3>
+                      <div className="flex items-center gap-2 mb-2">
+                        <StarRating rating={product.averageRating || 0} readonly size={16} />
+                        <span className="text-sm text-gray-600">
+                          ({product.totalRatings || 0})
+                        </span>
+                      </div>
                       <p className="text-gray-600 text-sm mb-4 line-clamp-3">{product.description}</p>
 
                       <div className="mt-auto">

@@ -45,10 +45,9 @@ export default function Checkout() {
         paymentMethod: formData.paymentMethod,
       }
 
-      await api.post("/orders", orderData)
+      const response = await api.post("/orders", orderData)
       clearCart()
-      alert("Order placed successfully!")
-      navigate("/orders")
+      navigate(`/order-confirmation?orderId=${response.data._id}`)
     } catch (error: any) {
       alert(error.response?.data?.message || "Failed to place order")
     } finally {

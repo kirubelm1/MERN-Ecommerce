@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../store/authStore"
 import api from "../config/api"
 import type { Order } from "../types"
-import { Package, Truck, CheckCircle, XCircle } from "lucide-react"
+import { Package, Truck, CheckCircle, XCircle, Star } from "lucide-react"
+import StarRating from "../components/StarRating"
+import Button from "../components/ui/Button"
 
 export default function Orders() {
   const { user } = useAuthStore()
@@ -143,6 +145,15 @@ export default function Orders() {
                             ${Number(item.price * item.quantity || 0).toFixed(2)}
                           </p>
                         </div>
+                        {order.status === "delivered" && (
+                          <Button
+                            onClick={() => navigate(`/products/${item.product._id}`)}
+                            className="flex items-center gap-2"
+                          >
+                            <Star className="w-4 h-4" />
+                            Rate Product
+                          </Button>
+                        )}
                       </div>
                     ))}
                   </div>
