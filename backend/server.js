@@ -12,6 +12,22 @@ const app = express()
 // Connect to MongoDB
 connectDB()
 
+// Seed admin user if enabled
+if (process.env.SEED_ADMIN === "true") {
+  import("./models/User.js").then(async ({ default: User }) => {
+    const adminExists = await User.findOne({ email: process.env.ADMIN_EMAIL })
+    if (!adminExists) {
+      await User.create({
+        email: process.env.ADMIN_EMAIL,
+        password: process.env.ADMIN_PASSWORD,
+        name: "Admin",
+        role: "admin",
+      })
+      console.log("Admin user created")
+    }
+  })
+}
+
 // Middleware
 app.use(cors())
 app.use(express.json())

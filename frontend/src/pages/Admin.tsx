@@ -167,14 +167,31 @@ export default function Admin() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { name: "Electronics", icon: "https://cdn-icons-png.flaticon.com/128/684/684908.png" },
+                      { name: "Clothing", icon: "https://cdn-icons-png.flaticon.com/128/3050/3050464.png" },
+                      { name: "Books", icon: "https://cdn-icons-png.flaticon.com/128/2702/2702154.png" },
+                      { name: "Home", icon: "https://cdn-icons-png.flaticon.com/128/1946/1946488.png" },
+                      { name: "Sports", icon: "https://cdn-icons-png.flaticon.com/128/857/857418.png" },
+                      { name: "Beauty", icon: "https://cdn-icons-png.flaticon.com/128/3081/3081559.png" },
+                    ].map((cat) => (
+                      <button
+                        key={cat.name}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, category: cat.name })}
+                        className={`flex items-center gap-2 px-4 py-2 border rounded-lg transition ${
+                          formData.category === cat.name
+                            ? "border-blue-500 bg-blue-50 text-blue-700"
+                            : "border-gray-300 hover:border-blue-300"
+                        }`}
+                      >
+                        <img src={cat.icon} alt={cat.name} className="w-6 h-6" />
+                        <span className="font-medium">{cat.name}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
