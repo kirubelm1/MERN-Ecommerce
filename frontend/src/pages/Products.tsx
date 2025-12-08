@@ -6,7 +6,7 @@ import api from "../config/api"
 import type { Product } from "../types"
 import { useCartStore } from "../store/cartStore"
 import { useToastContext } from "../App"
-import { ShoppingCart, Heart, Search, Grid, List, SlidersHorizontal, X, TrendingUp, Star, Package, Eye, GitCompare, Clock, Zap, Shield, Truck, RefreshCw } from "lucide-react"
+import { ShoppingCart, Heart, Search, Grid, List, SlidersHorizontal, X, TrendingUp, Star, Package, Eye, GitCompare, Clock, Zap, Shield, Truck, RefreshCw, Award, DollarSign, TrendingDown, CheckCircle, AlertTriangle } from "lucide-react"
 import Button from "../components/ui/Button"
 import StarRating from "../components/StarRating"
 
@@ -782,40 +782,40 @@ export default function Products() {
                   
                   let recommended = null
                   let reason = ""
-                  let icon = null
+                  let IconComponent = null
 
                   // Case 1: High price + Low rating vs Low price + High rating
                   if (product1.price > product2.price && p1Rating < p2Rating) {
                     recommended = product2
                     reason = "Better value: Lower price with higher rating"
-                    icon = "💎"
+                    IconComponent = TrendingUp
                   }
                   else if (product2.price > product1.price && p2Rating < p1Rating) {
                     recommended = product1
                     reason = "Better value: Lower price with higher rating"
-                    icon = "💎"
+                    IconComponent = TrendingUp
                   }
                   // Case 2: High price + High rating vs Low price + Low rating
                   else if (product1.price > product2.price && p1Rating > p2Rating) {
                     if (priceDiff / product1.price < 0.3) { // Less than 30% price difference
                       recommended = product1
                       reason = "Premium choice: Better quality worth the extra cost"
-                      icon = "⭐"
+                      IconComponent = Award
                     } else {
                       recommended = product2
                       reason = "Budget-friendly: Significant savings, acceptable quality"
-                      icon = "💰"
+                      IconComponent = DollarSign
                     }
                   }
                   else if (product2.price > product1.price && p2Rating > p1Rating) {
                     if (priceDiff / product2.price < 0.3) {
                       recommended = product2
                       reason = "Premium choice: Better quality worth the extra cost"
-                      icon = "⭐"
+                      IconComponent = Award
                     } else {
                       recommended = product1
                       reason = "Budget-friendly: Significant savings, acceptable quality"
-                      icon = "💰"
+                      IconComponent = DollarSign
                     }
                   }
                   // Case 3: Similar price, different ratings
@@ -823,43 +823,43 @@ export default function Products() {
                     if (Math.abs(p1Rating - p2Rating) > 0.5) {
                       recommended = betterRated
                       reason = "Clear winner: Similar price but significantly better rated"
-                      icon = "🏆"
+                      IconComponent = Star
                     } else if (p1Stock !== p2Stock) {
                       recommended = moreStock
                       reason = "Better availability: Similar quality and price, more in stock"
-                      icon = "📦"
+                      IconComponent = Package
                     }
                   }
                   // Case 4: Best value for money
                   else if (p1Value > p2Value * 1.2) {
                     recommended = product1
                     reason = "Best value: Highest quality per dollar spent"
-                    icon = "🎯"
+                    IconComponent = Zap
                   }
                   else if (p2Value > p1Value * 1.2) {
                     recommended = product2
                     reason = "Best value: Highest quality per dollar spent"
-                    icon = "🎯"
+                    IconComponent = Zap
                   }
                   // Case 5: Stock consideration
                   else if (p1Stock < 5 && p2Stock > 10) {
                     recommended = product2
                     reason = "Better availability: Low stock alert on alternative"
-                    icon = "⚡"
+                    IconComponent = AlertTriangle
                   }
                   else if (p2Stock < 5 && p1Stock > 10) {
                     recommended = product1
                     reason = "Better availability: Low stock alert on alternative"
-                    icon = "⚡"
+                    IconComponent = AlertTriangle
                   }
                   // Default: Recommend cheaper with decent rating
                   else {
                     recommended = cheaperProduct
                     reason = "Safe choice: More affordable option"
-                    icon = "✓"
+                    IconComponent = CheckCircle
                   }
 
-                  return { recommended, reason, icon }
+                  return { recommended, reason, IconComponent }
                 }
 
                 const recommendation = getRecommendation()
@@ -891,14 +891,18 @@ export default function Products() {
                     </div>
 
                     {/* AI Recommendation */}
-                    {recommendation.recommended && (
+                    {recommendation.recommended && recommendation.IconComponent && (
                       <div className="mt-6 p-6 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl relative overflow-hidden border border-slate-700">
-                        <div className="absolute top-0 right-0 text-9xl opacity-5 text-white">{recommendation.icon}</div>
+                        <div className="absolute top-0 right-0 opacity-5">
+                          <recommendation.IconComponent className="w-40 h-40 text-white" />
+                        </div>
                         <div className="relative z-10">
                           <div className="flex items-start justify-between mb-4">
                             <div>
                               <div className="flex items-center gap-3 mb-2">
-                                <span className="text-4xl">{recommendation.icon}</span>
+                                <div className="p-3 bg-blue-600 rounded-xl">
+                                  <recommendation.IconComponent className="w-7 h-7 text-white" />
+                                </div>
                                 <h3 className="text-2xl font-bold text-white">Our Recommendation</h3>
                               </div>
                               <p className="text-slate-300 text-base">{recommendation.reason}</p>
