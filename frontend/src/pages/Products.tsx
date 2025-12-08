@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom"
 import api from "../config/api"
 import type { Product } from "../types"
 import { useCartStore } from "../store/cartStore"
+import { useToastContext } from "../App"
 import { ShoppingCart } from "lucide-react"
 import Button from "../components/ui/Button"
 import StarRating from "../components/StarRating"
 
 export default function Products() {
   const navigate = useNavigate()
+  const { showToast } = useToastContext()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState<string>("all")
@@ -48,7 +50,7 @@ export default function Products() {
   const handleAddToCart = (product: Product) => {
     if (product.stock > 0) {
       addItem(product)
-      alert(`${product.name} added to cart!`)
+      showToast(`${product.name} added to cart!`, "success")
     }
   }
 

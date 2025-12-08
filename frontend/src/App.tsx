@@ -1,6 +1,17 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Navbar from "./components/Navbar"
 import ProtectedRoute from "./components/ProtectedRoute"
+import ToastContainer from "./components/ToastContainer"
+import { useToast } from "./hooks/useToast"
+import { createContext, useContext } from "react"
+
+const ToastContext = createContext<ReturnType<typeof useToast> | null>(null)
+
+export const useToastContext = () => {
+  const context = useContext(ToastContext)
+  if (!context) throw new Error("useToastContext must be used within ToastProvider")
+  return context
+}
 import Home from "./pages/Home"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
@@ -15,8 +26,11 @@ import OrderConfirmation from "./pages/OrderConfirmation"
 import AdminOrders from "./pages/AdminOrders"
 
 function App() {
+  const toast = useToast()
+  
   return (
-    <Router>
+    <ToastContext.Provider value={toast}>
+      <Router>
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <Routes>
@@ -97,7 +111,9 @@ function App() {
           />
         </Routes>
       </div>
+      <ToastContainer toasts={toast.toasts} removeToast={toast.removeToast} />
     </Router>
+    </ToastContext.Provider>
   )
 }
 

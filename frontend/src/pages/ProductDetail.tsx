@@ -6,6 +6,7 @@ import api from "../config/api"
 import type { Product } from "../types"
 import { useCartStore } from "../store/cartStore"
 import { useAuthStore } from "../store/authStore"
+import { useToastContext } from "../App"
 import { ShoppingCart, ArrowLeft } from "lucide-react"
 import Button from "../components/ui/Button"
 import StarRating from "../components/StarRating"
@@ -14,6 +15,7 @@ export default function ProductDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuthStore()
+  const { showToast } = useToastContext()
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(1)
@@ -70,13 +72,13 @@ export default function ProductDetail() {
       for (let i = 0; i < quantity; i++) {
         addItem(product)
       }
-      alert(`${quantity} x ${product.name} added to cart!`)
+      showToast(`${quantity} x ${product.name} added to cart!`, "success")
     }
   }
 
   const handleSubmitRating = async () => {
     if (!product || !userRating) {
-      alert("Please select a rating")
+      showToast("Please select a rating", "error")
       return
     }
     
@@ -94,9 +96,9 @@ export default function ProductDetail() {
       const reviewsRes = await api.get(`/products/${product._id}/ratings`)
       setReviews(reviewsRes.data.ratings || [])
       
-      alert("Rating submitted successfully!")
+      showToast("Rating submitted successfully!", "success")
     } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to submit rating")
+      showToast(error.response?.data?.message || "Failed to submit rating", "error")
     } finally {
       setSubmittingRating(false)
     }
