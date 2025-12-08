@@ -18,6 +18,7 @@ const orderSchema = new mongoose.Schema(
         price: { type: Number, required: true },
         quantity: { type: Number, required: true },
         imageUrl: String,
+        rated: { type: Boolean, default: false },
       },
     ],
     shippingAddress: {

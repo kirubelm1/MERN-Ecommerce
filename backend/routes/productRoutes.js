@@ -175,18 +175,30 @@ router.post("/:id/rating", protect, async (req, res) => {
       return res.status(400).json({ message: "Rating must be between 1 and 5" })
     }
 
-    // Check if user has purchased this product
+    // Check if user has purchased this product and hasn't rated it yet
     const Order = (await import("../models/Order.js")).default
     const userOrders = await Order.find({
       user: req.user._id,
+      status: "delivered",
     })
 
-    const hasPurchased = userOrders.some((order) =>
-      order.items.some((item) => item.product.toString() === req.params.id)
-    )
+    let orderWithProduct = null
+    let itemIndex = -1
 
-    if (!hasPurchased) {
-      return res.status(403).json({ message: "You can only rate products you have purchased" })
+    for (const order of userOrders) {
+      const index = order.items.findIndex((item) => item.product.toString() === req.params.id)
+      if (index !== -1) {
+        if (order.items[index].rated) {
+          return res.status(403).json({ message: "You have already rated this product" })
+        }
+        orderWithProduct = order
+        itemIndex = index
+        break
+      }
+    }
+
+    if (!orderWithProduct) {
+      return res.status(403).json({ message: "You can only rate products you have purchased and received" })
     }
 
     // Check if user already rated
@@ -214,6 +226,10 @@ router.post("/:id/rating", protect, async (req, res) => {
     product.totalRatings = product.ratings.length
 
     await product.save()
+
+    // Mark product as rated in the order
+    orderWithProduct.items[itemIndex].rated = true
+    await orderWithProduct.save()
 
     res.json({
       averageRating: product.averageRating,

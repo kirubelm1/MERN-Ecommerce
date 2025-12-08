@@ -56,6 +56,7 @@ export default function Orders() {
       setRatingProduct(null)
       setUserRating(0)
       setReview("")
+      fetchOrders() // Refresh orders to update rated status
     } catch (error: any) {
       showToast(error.response?.data?.message || "Failed to submit rating", "error")
     } finally {
@@ -231,7 +232,7 @@ export default function Orders() {
                             ${Number(item.price * item.quantity || 0).toFixed(2)}
                           </p>
                         </div>
-                        {order.status === "delivered" && (
+                        {order.status === "delivered" && !item.rated && (
                           <Button
                             onClick={() => setRatingProduct({ ...item.product, orderId: order._id })}
                             className="flex items-center gap-2"
@@ -239,6 +240,12 @@ export default function Orders() {
                             <Star className="w-4 h-4" />
                             Rate Product
                           </Button>
+                        )}
+                        {order.status === "delivered" && item.rated && (
+                          <div className="flex items-center gap-2 text-green-600">
+                            <CheckCircle className="w-4 h-4" />
+                            <span className="text-sm font-medium">Rated</span>
+                          </div>
                         )}
                       </div>
                     ))}
