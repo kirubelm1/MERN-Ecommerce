@@ -24,6 +24,7 @@ import Cart from "./pages/Cart"
 import Checkout from "./pages/Checkout"
 import OrderConfirmation from "./pages/OrderConfirmation"
 import AdminOrders from "./pages/AdminOrders"
+import NotFound from "./pages/NotFound"
 
 function App() {
   const toast = useToast()
@@ -109,6 +110,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
       <ToastContainer toasts={toast.toasts} removeToast={toast.removeToast} />
