@@ -243,7 +243,7 @@ Feel free to fork this project and submit pull requests.
 
 ---
 
-## 👨‍💻 Author
+## 👨‍💻 Developer
 
 **Kirubel Mesfin**  
 💼 Passionate full-stack developer building real-world MERN applications.  

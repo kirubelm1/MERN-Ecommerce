@@ -229,23 +229,23 @@ export default function Products() {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-6">
           {/* Sidebar Filters */}
-          <aside className={`w-full lg:w-96 space-y-6 ${showFilters ? "block" : "hidden lg:block"} lg:sticky lg:top-4 lg:self-start lg:max-h-screen lg:overflow-y-auto`}>
+          <aside className={`w-full lg:w-72 space-y-4 ${showFilters ? "block" : "hidden lg:block"} lg:sticky lg:top-4 lg:self-start lg:max-h-screen lg:overflow-y-auto`}>
             {/* Categories */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <Package className="w-5 h-5 text-blue-600" />
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
+                <Package className="w-4 h-4 text-blue-600" />
                 Categories
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {categories.map((category) => (
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`w-full text-left px-4 py-3 rounded-xl font-medium transition-all ${
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                       selectedCategory === category
-                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105"
+                        ? "bg-blue-600 text-white"
                         : "bg-gray-50 text-gray-700 hover:bg-gray-100"
                     }`}
                   >
@@ -256,13 +256,13 @@ export default function Products() {
             </div>
 
             {/* Price Range */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-blue-600" />
                 Price Range
               </h3>
-              <div className="space-y-4">
-                <div className="flex justify-between text-sm font-semibold text-gray-700">
+              <div className="space-y-3">
+                <div className="flex justify-between text-xs font-semibold text-gray-700">
                   <span>${priceRange[0]}</span>
                   <span>${priceRange[1]}</span>
                 </div>
@@ -272,21 +272,21 @@ export default function Products() {
                   max={maxPrice}
                   value={priceRange[1]}
                   onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                  className="w-full h-3 bg-gradient-to-r from-blue-200 to-purple-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                 />
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <input
                     type="number"
                     value={priceRange[0]}
                     onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
-                    className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                    className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:border-blue-500 focus:outline-none"
                     placeholder="Min"
                   />
                   <input
                     type="number"
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                    className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                    className="w-full px-2 py-1 border border-gray-200 rounded text-xs focus:border-blue-500 focus:outline-none"
                     placeholder="Max"
                   />
                 </div>
@@ -294,48 +294,48 @@ export default function Products() {
             </div>
 
             {/* Stock Filter */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4">Availability</h3>
-              <label className="flex items-center gap-3 cursor-pointer">
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-3">Availability</h3>
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={showInStock}
                   onChange={(e) => setShowInStock(e.target.checked)}
-                  className="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+                  className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
                 />
-                <span className="text-gray-700 font-medium">In Stock Only</span>
+                <span className="text-gray-700 text-sm font-medium">In Stock Only</span>
               </label>
             </div>
 
             {/* Stats */}
-            <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
-              <h3 className="text-lg font-bold mb-2">Products Found</h3>
-              <p className="text-4xl font-bold">{filteredProducts.length}</p>
-              <p className="text-sm opacity-90 mt-1">out of {products.length} total</p>
+            <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl shadow-md p-4 text-white">
+              <h3 className="text-sm font-bold mb-1">Products Found</h3>
+              <p className="text-2xl font-bold">{filteredProducts.length}</p>
+              <p className="text-xs opacity-90">out of {products.length} total</p>
             </div>
 
             {/* Recently Viewed */}
             {recentlyViewed.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-blue-600" />
+              <div className="bg-white rounded-xl shadow-md p-4">
+                <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-blue-600" />
                   Recently Viewed
                 </h3>
-                <div className="space-y-3">
-                  {recentlyViewed.map((product) => (
+                <div className="space-y-2">
+                  {recentlyViewed.slice(0, 3).map((product) => (
                     <div
                       key={product._id}
                       onClick={() => navigate(`/products/${product._id}`)}
-                      className="flex gap-3 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                      className="flex gap-2 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
                     >
                       <img
                         src={product.imageUrl || "/placeholder.svg"}
                         alt={product.name}
-                        className="w-16 h-16 object-cover rounded-lg"
+                        className="w-12 h-12 object-cover rounded-lg"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm line-clamp-2">{product.name}</p>
-                        <p className="text-blue-600 font-bold text-sm">${product.price.toFixed(2)}</p>
+                        <p className="font-semibold text-xs line-clamp-1">{product.name}</p>
+                        <p className="text-blue-600 font-bold text-xs">${product.price.toFixed(2)}</p>
                       </div>
                     </div>
                   ))}
@@ -344,33 +344,33 @@ export default function Products() {
             )}
 
             {/* Trust Badges */}
-            <div className="bg-white rounded-2xl shadow-lg p-6">
-              <h3 className="text-xl font-bold mb-4">Why Shop With Us</h3>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Shield className="w-5 h-5 text-green-600" />
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <h3 className="text-lg font-bold mb-3">Why Shop With Us</h3>
+              <div className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <div className="p-1 bg-green-100 rounded">
+                    <Shield className="w-4 h-4 text-green-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Secure Payment</p>
+                    <p className="font-semibold text-xs">Secure Payment</p>
                     <p className="text-xs text-gray-600">100% secure transactions</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Truck className="w-5 h-5 text-blue-600" />
+                <div className="flex items-start gap-2">
+                  <div className="p-1 bg-blue-100 rounded">
+                    <Truck className="w-4 h-4 text-blue-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Free Shipping</p>
+                    <p className="font-semibold text-xs">Free Shipping</p>
                     <p className="text-xs text-gray-600">On orders over $50</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <RefreshCw className="w-5 h-5 text-purple-600" />
+                <div className="flex items-start gap-2">
+                  <div className="p-1 bg-purple-100 rounded">
+                    <RefreshCw className="w-4 h-4 text-purple-600" />
                   </div>
                   <div>
-                    <p className="font-semibold text-sm">Easy Returns</p>
+                    <p className="font-semibold text-xs">Easy Returns</p>
                     <p className="text-xs text-gray-600">30-day return policy</p>
                   </div>
                 </div>
