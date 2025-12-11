@@ -228,7 +228,7 @@ export default function ProductsPage() {
           <div className="mb-4 text-sm text-muted-foreground">
             Showing {filteredAndSortedProducts.length} {filteredAndSortedProducts.length === 1 ? "product" : "products"}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {filteredAndSortedProducts.map((product) => (
               <Card key={product._id} className="group overflow-hidden hover:shadow-lg transition-shadow">
                 <div className="aspect-square overflow-hidden bg-muted relative">

@@ -190,7 +190,7 @@ export default function OrderDetailPage() {
               {order.items.map((item, index) => (
                 <div key={index}>
                   <div className="flex gap-4">
-                    <div className="w-20 h-20 rounded bg-muted overflow-hidden flex-shrink-0">
+                    <div className="w-16 h-16 rounded bg-muted overflow-hidden flex-shrink-0">
                       <img
                         src={
                           item.imageUrl ||
