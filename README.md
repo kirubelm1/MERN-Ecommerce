@@ -231,7 +231,7 @@ npm run dev
 
 ## 🌍 Deployment
 
-You can deploy the backend easily on **Render** and connect it to **MongoDB Atlas**.  
+You can deploy the backend easily on **Render** 
 Make sure to set all environment variables in the Render dashboard.
 
 ---
